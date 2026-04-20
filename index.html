@@ -1,0 +1,322 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Modul Pembelajaran SDLC</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --color-background-primary: #ffffff;
+      --color-background-secondary: #f5f5f4;
+      --color-background-tertiary: #eeede9;
+      --color-text-primary: #1a1a18;
+      --color-text-secondary: #5a5a56;
+      --color-text-tertiary: #8a8a85;
+      --color-border-tertiary: rgba(0,0,0,0.12);
+      --color-border-secondary: rgba(0,0,0,0.22);
+      --color-border-primary: rgba(0,0,0,0.35);
+      --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --border-radius-md: 8px;
+      --border-radius-lg: 12px;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --color-background-primary: #1e1e1c;
+        --color-background-secondary: #2a2a28;
+        --color-background-tertiary: #141412;
+        --color-text-primary: #f0efeb;
+        --color-text-secondary: #a8a8a2;
+        --color-text-tertiary: #6a6a65;
+        --color-border-tertiary: rgba(255,255,255,0.1);
+        --color-border-secondary: rgba(255,255,255,0.18);
+        --color-border-primary: rgba(255,255,255,0.28);
+      }
+    }
+    body {
+      font-family: var(--font-sans);
+      background: var(--color-background-tertiary);
+      color: var(--color-text-primary);
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+    .container { max-width: 720px; margin: 0 auto; }
+    .wrap { padding: 1.5rem 0; }
+    .header { margin-bottom: 1.5rem; }
+    .header h2 { font-size: 11px; font-weight: 500; letter-spacing: 0.08em; color: var(--color-text-tertiary); text-transform: uppercase; margin-bottom: 6px; }
+    .header h1 { font-size: 22px; font-weight: 500; color: var(--color-text-primary); }
+    .header p { font-size: 14px; color: var(--color-text-secondary); margin-top: 4px; line-height: 1.5; }
+    .timeline { display: flex; align-items: stretch; gap: 0; margin-bottom: 1.5rem; overflow-x: auto; padding-bottom: 4px; }
+    .tl-item { display: flex; flex-direction: column; align-items: center; flex: 1; min-width: 70px; position: relative; cursor: pointer; }
+    .tl-circle { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 500; border: 2px solid transparent; transition: all 0.2s; z-index: 1; }
+    .tl-line { position: absolute; top: 18px; left: calc(50% + 18px); right: calc(-50% + 18px); height: 2px; background: var(--color-border-tertiary); }
+    .tl-item:last-child .tl-line { display: none; }
+    .tl-label { font-size: 10px; color: var(--color-text-tertiary); margin-top: 6px; text-align: center; line-height: 1.3; }
+    .tl-item.active .tl-label { font-weight: 500; }
+    .tl-num { font-size: 11px; font-weight: 500; }
+    .card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1.25rem; margin-bottom: 1rem; }
+    .card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 1rem; }
+    .card-icon { width: 40px; height: 40px; border-radius: var(--border-radius-md); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+    .card-title h3 { font-size: 16px; font-weight: 500; color: var(--color-text-primary); }
+    .card-title p { font-size: 13px; color: var(--color-text-secondary); margin-top: 2px; }
+    .section-label { font-size: 11px; font-weight: 500; letter-spacing: 0.06em; color: var(--color-text-tertiary); text-transform: uppercase; margin-bottom: 8px; }
+    .desc { font-size: 14px; color: var(--color-text-secondary); line-height: 1.65; margin-bottom: 1rem; }
+    .tag-list { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1rem; }
+    .tag { padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; }
+    .checklist { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+    .checklist li { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; color: var(--color-text-secondary); line-height: 1.5; }
+    .check-dot { width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+    .check-dot::after { content: ''; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 1rem; }
+    .metric-card { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 0.875rem; }
+    .metric-label { font-size: 11px; color: var(--color-text-tertiary); margin-bottom: 4px; }
+    .metric-val { font-size: 15px; font-weight: 500; color: var(--color-text-primary); }
+    .nav-row { display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem; }
+    .nav-btn { padding: 8px 16px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: var(--color-background-primary); color: var(--color-text-secondary); font-size: 13px; cursor: pointer; transition: all 0.15s; }
+    .nav-btn:hover { background: var(--color-background-secondary); }
+    .nav-btn.primary { background: var(--color-text-primary); color: var(--color-background-primary); border-color: transparent; }
+    .nav-btn.primary:hover { opacity: 0.85; }
+    .nav-btn:disabled { opacity: 0.35; cursor: default; }
+    .progress-text { font-size: 12px; color: var(--color-text-tertiary); }
+    .quiz-box { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 1rem; margin-bottom: 1rem; }
+    .quiz-q { font-size: 14px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 10px; }
+    .quiz-opts { display: flex; flex-direction: column; gap: 6px; }
+    .quiz-opt { padding: 8px 12px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: var(--color-background-primary); font-size: 13px; color: var(--color-text-secondary); cursor: pointer; text-align: left; transition: all 0.15s; }
+    .quiz-opt:hover:not(:disabled) { background: var(--color-background-secondary); border-color: var(--color-border-primary); color: var(--color-text-primary); }
+    .quiz-opt.correct { background: #EAF3DE; border-color: #639922; color: #3B6D11; }
+    .quiz-opt.wrong { background: #FCEBEB; border-color: #A32D2D; color: #791F1F; }
+    .quiz-fb { font-size: 13px; margin-top: 8px; padding: 8px 12px; border-radius: var(--border-radius-md); line-height: 1.5; }
+    .quiz-fb.ok { background: #EAF3DE; color: #3B6D11; }
+    .quiz-fb.no { background: #FCEBEB; color: #791F1F; }
+    .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; }
+    .sum-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 0.875rem; cursor: pointer; transition: all 0.15s; }
+    .sum-card:hover { border-color: var(--color-border-primary); background: var(--color-background-secondary); }
+    .sum-num { font-size: 10px; font-weight: 500; color: var(--color-text-tertiary); margin-bottom: 4px; }
+    .sum-name { font-size: 13px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 2px; }
+    .sum-sub { font-size: 11px; color: var(--color-text-tertiary); }
+  </style>
+</head>
+<body>
+<div class="container">
+<div class="wrap">
+  <div class="header">
+    <h2>Modul Pembelajaran</h2>
+    <h1>Software Development Life Cycle</h1>
+    <p>Pelajari 7 fase SDLC secara interaktif — dari perencanaan hingga pemeliharaan sistem.</p>
+  </div>
+  <div class="timeline" id="timeline"></div>
+  <div id="phase-content"></div>
+  <div class="nav-row">
+    <button class="nav-btn" id="btn-prev" onclick="navigate(-1)">← Sebelumnya</button>
+    <span class="progress-text" id="progress-text"></span>
+    <button class="nav-btn primary" id="btn-next" onclick="navigate(1)">Selanjutnya →</button>
+  </div>
+</div>
+</div>
+<script>
+const phases = [
+  {
+    id: 0, name: "Overview", short: "Intro", icon: "◎",
+    color: "#534AB7", bg: "#EEEDFE", textColor: "#3C3489",
+    tagColor: "#EEEDFE", tagText: "#3C3489", tagBorder: "#AFA9EC", dotColor: "#534AB7",
+    title: "Apa itu SDLC?", subtitle: "Kerangka pengembangan perangkat lunak terstruktur",
+    desc: "SDLC (Software Development Life Cycle) adalah proses terstruktur yang digunakan tim untuk merencanakan, membuat, menguji, dan mengantarkan perangkat lunak berkualitas tinggi secara efisien dan terkendali.",
+    tags: ["Waterfall", "Agile", "Scrum", "Kanban", "Spiral", "V-Model"],
+    checkLabel: "Mengapa SDLC penting?",
+    checks: ["Menjamin kualitas produk secara sistematis","Mengurangi risiko kegagalan proyek","Mengoptimalkan biaya dan waktu pengembangan","Memudahkan komunikasi antar tim dan stakeholder","Memberikan dokumentasi yang jelas di setiap tahapan"],
+    metrics: [{label:"Fase Utama",val:"7 Fase"},{label:"Metodologi",val:"10+ Model"},{label:"Tujuan",val:"Kualitas & Efisiensi"},{label:"Scope",val:"End-to-End"}],
+    quiz: null
+  },
+  {
+    id: 1, name: "Perencanaan", short: "Plan", icon: "◆",
+    color: "#185FA5", bg: "#E6F1FB", textColor: "#0C447C",
+    tagColor: "#E6F1FB", tagText: "#0C447C", tagBorder: "#85B7EB", dotColor: "#185FA5",
+    title: "Perencanaan (Planning)", subtitle: "Mendefinisikan tujuan dan kelayakan proyek",
+    desc: "Fase pertama menentukan scope, tujuan, jadwal, anggaran, dan sumber daya. Tim menganalisis kelayakan teknis, finansial, dan operasional sebelum proyek dimulai secara resmi.",
+    tags: ["Feasibility Study","Resource Plan","Risk Analysis","Project Charter","Timeline"],
+    checkLabel: "Output utama fase ini",
+    checks: ["Project charter & scope document","Analisis risiko awal","Estimasi biaya & jadwal","Penentuan teknologi & tim","Persetujuan stakeholder"],
+    metrics: [{label:"Dokumen kunci",val:"Project Charter"},{label:"Teknik",val:"SWOT, ROI"}],
+    quiz: { q: "Apa tujuan utama dari fase Perencanaan?", opts: ["Menulis kode program","Menentukan scope, kelayakan, dan sumber daya proyek","Melakukan pengujian sistem","Membuat desain UI"], ans: 1, fb: "Benar! Fase Planning berfokus pada penetapan scope, analisis kelayakan, estimasi biaya & jadwal sebelum pengembangan dimulai.", fbWrong: "Belum tepat. Fase Planning adalah tentang mendefinisikan scope, feasibility, anggaran, dan sumber daya — bukan coding atau testing." }
+  },
+  {
+    id: 2, name: "Analisis", short: "Analisis", icon: "◑",
+    color: "#3B6D11", bg: "#EAF3DE", textColor: "#27500A",
+    tagColor: "#EAF3DE", tagText: "#27500A", tagBorder: "#97C459", dotColor: "#639922",
+    title: "Analisis Kebutuhan (Requirements)", subtitle: "Mengumpulkan dan mendokumentasikan kebutuhan sistem",
+    desc: "Tim mengumpulkan kebutuhan fungsional dan non-fungsional dari stakeholder. Setiap kebutuhan dianalisis, didokumentasikan, dan divalidasi untuk memastikan semua pihak memiliki pemahaman yang sama.",
+    tags: ["Functional Req","Non-Functional Req","Use Case","User Stories","BRD","SRS"],
+    checkLabel: "Aktivitas utama",
+    checks: ["Wawancara & workshop dengan stakeholder","Pembuatan use case diagram","Penulisan user stories & acceptance criteria","Validasi kebutuhan bersama klien","Pembuatan dokumen SRS / BRD"],
+    metrics: [{label:"Dokumen kunci",val:"SRS / BRD"},{label:"Teknik",val:"Interview, FGD"}],
+    quiz: { q: "Dokumen apa yang dihasilkan di fase Analisis Kebutuhan?", opts: ["Source code aplikasi","Test case & bug report","SRS (Software Requirements Specification)","Deployment script"], ans: 2, fb: "Tepat! SRS mendokumentasikan semua kebutuhan fungsional dan non-fungsional sebagai acuan pengembangan.", fbWrong: "Kurang tepat. Fase Requirements menghasilkan SRS/BRD — dokumen spesifikasi kebutuhan, bukan kode atau test case." }
+  },
+  {
+    id: 3, name: "Desain", short: "Desain", icon: "◧",
+    color: "#854F0B", bg: "#FAEEDA", textColor: "#633806",
+    tagColor: "#FAEEDA", tagText: "#633806", tagBorder: "#EF9F27", dotColor: "#BA7517",
+    title: "Desain Sistem (System Design)", subtitle: "Merancang arsitektur dan antarmuka sistem",
+    desc: "Kebutuhan diubah menjadi blueprint teknis. Tim merancang arsitektur sistem, database schema, desain UI/UX, dan API. Desain dibagi menjadi High-Level Design (HLD) dan Low-Level Design (LLD).",
+    tags: ["HLD","LLD","UI/UX","ERD","Architecture","API Design","Prototype"],
+    checkLabel: "Artefak yang dihasilkan",
+    checks: ["Diagram arsitektur sistem (HLD)","Database schema & ERD","Wireframe & mockup UI","Spesifikasi API & integrasi","Detail desain modul (LLD)"],
+    metrics: [{label:"Level desain",val:"HLD & LLD"},{label:"Tools",val:"Figma, Draw.io"}],
+    quiz: { q: "Apa perbedaan HLD dan LLD dalam desain sistem?", opts: ["HLD tentang warna UI, LLD tentang database","HLD adalah arsitektur keseluruhan, LLD adalah detail teknis per modul","HLD untuk developer, LLD untuk designer","Keduanya sama saja"], ans: 1, fb: "Benar! HLD menggambarkan arsitektur sistem secara keseluruhan, sementara LLD menjelaskan detail teknis implementasi tiap komponen.", fbWrong: "Belum tepat. HLD (High-Level Design) = gambaran besar arsitektur, LLD (Low-Level Design) = detail implementasi teknis per modul." }
+  },
+  {
+    id: 4, name: "Implementasi", short: "Coding", icon: "▶",
+    color: "#993C1D", bg: "#FAECE7", textColor: "#712B13",
+    tagColor: "#FAECE7", tagText: "#712B13", tagBorder: "#F0997B", dotColor: "#D85A30",
+    title: "Implementasi (Coding)", subtitle: "Membangun perangkat lunak berdasarkan desain",
+    desc: "Developer menulis kode berdasarkan spesifikasi desain. Fase ini menggunakan version control, code review, dan CI/CD pipeline untuk menjaga kualitas. Setiap modul dikembangkan dan diintegrasikan secara bertahap.",
+    tags: ["Version Control","Code Review","CI/CD","Unit Testing","Git","Sprint"],
+    checkLabel: "Praktik terbaik",
+    checks: ["Penggunaan version control (Git) secara konsisten","Code review oleh peers sebelum merge","Penulisan unit test bersamaan dengan kode","Integrasi CI/CD untuk otomasi build","Dokumentasi kode yang jelas"],
+    metrics: [{label:"Output",val:"Source Code"},{label:"Fase terpanjang",val:"40-50% waktu"}],
+    quiz: { q: "Mengapa code review penting dalam fase implementasi?", opts: ["Memperlambat pengembangan sengaja","Mendeteksi bug lebih awal dan menjaga kualitas kode","Menggantikan kebutuhan testing","Hanya formalitas belaka"], ans: 1, fb: "Tepat! Code review membantu mendeteksi bug lebih awal, memastikan standar kode, dan berbagi pengetahuan antar tim.", fbWrong: "Kurang tepat. Code review krusial untuk mendeteksi bug lebih awal, menjaga standar kode, dan transfer knowledge antar developer." }
+  },
+  {
+    id: 5, name: "Pengujian", short: "Testing", icon: "◉",
+    color: "#993556", bg: "#FBEAF0", textColor: "#72243E",
+    tagColor: "#FBEAF0", tagText: "#72243E", tagBorder: "#ED93B1", dotColor: "#D4537E",
+    title: "Pengujian (Testing)", subtitle: "Verifikasi dan validasi kualitas perangkat lunak",
+    desc: "QA engineer menguji sistem secara menyeluruh untuk menemukan dan memperbaiki defect. Pengujian mencakup berbagai level dan jenis — dari unit test hingga UAT bersama pengguna akhir.",
+    tags: ["Unit Test","Integration Test","System Test","UAT","Regression","Performance","Security"],
+    checkLabel: "Jenis pengujian utama",
+    checks: ["Unit Testing: menguji fungsi/komponen individual","Integration Testing: menguji interaksi antar modul","System Testing: menguji sistem secara end-to-end","Performance Testing: beban, stres, dan skalabilitas","UAT: validasi akhir bersama pengguna"],
+    metrics: [{label:"Filosofi",val:"Shift-Left Testing"},{label:"Tools",val:"Jest, Selenium, JMeter"}],
+    quiz: { q: "Apa itu User Acceptance Testing (UAT)?", opts: ["Testing yang dilakukan developer setelah coding","Pengujian akhir oleh pengguna untuk memvalidasi sistem sesuai kebutuhan bisnis","Testing performa server","Pengujian keamanan sistem"], ans: 1, fb: "Benar! UAT adalah tahap validasi akhir di mana pengguna nyata menguji sistem untuk memastikan memenuhi kebutuhan bisnis.", fbWrong: "Belum tepat. UAT dilakukan oleh pengguna/klien untuk memastikan sistem sudah sesuai kebutuhan bisnis sebelum go-live." }
+  },
+  {
+    id: 6, name: "Deployment", short: "Deploy", icon: "▲",
+    color: "#0F6E56", bg: "#E1F5EE", textColor: "#085041",
+    tagColor: "#E1F5EE", tagText: "#085041", tagBorder: "#5DCAA5", dotColor: "#1D9E75",
+    title: "Deployment", subtitle: "Meluncurkan sistem ke lingkungan produksi",
+    desc: "Sistem yang telah lulus pengujian di-deploy ke lingkungan produksi. Strategi deployment dipilih untuk meminimalkan downtime dan risiko. Tim DevOps mengelola proses release secara terstruktur.",
+    tags: ["CI/CD Pipeline","Blue-Green","Canary Release","Rollback","Docker","Kubernetes"],
+    checkLabel: "Strategi deployment populer",
+    checks: ["Blue-Green Deployment: dua lingkungan paralel, zero downtime","Canary Release: rilis bertahap ke sebagian pengguna","Rolling Deployment: update bertahap per instance","Feature Flags: kontrol fitur tanpa re-deploy","Rollback plan untuk mitigasi kegagalan"],
+    metrics: [{label:"Prioritas",val:"Zero Downtime"},{label:"Tools",val:"Jenkins, GitHub Actions"}],
+    quiz: { q: "Apa keunggulan strategi Canary Release?", opts: ["Deploy langsung ke semua user sekaligus","Rilis bertahap ke sebagian kecil user untuk validasi sebelum full rollout","Tidak perlu testing sebelumnya","Menghapus versi lama secara otomatis"], ans: 1, fb: "Benar! Canary release memungkinkan pengujian di production dengan risiko minimal — jika ada masalah, dampaknya hanya ke sebagian kecil user.", fbWrong: "Kurang tepat. Canary Release = rilis ke ~5-10% user dulu untuk monitor, baru dilanjutkan ke semua user jika aman." }
+  },
+  {
+    id: 7, name: "Pemeliharaan", short: "Maintain", icon: "⬡",
+    color: "#5F5E5A", bg: "#F1EFE8", textColor: "#444441",
+    tagColor: "#F1EFE8", tagText: "#444441", tagBorder: "#B4B2A9", dotColor: "#888780",
+    title: "Pemeliharaan (Maintenance)", subtitle: "Menjaga dan meningkatkan sistem pasca-launch",
+    desc: "Setelah deployment, sistem terus dipantau dan diperbarui. Tim menangani bug yang ditemukan di produksi, meningkatkan performa, dan menambahkan fitur baru berdasarkan feedback pengguna.",
+    tags: ["Bug Fix","Patch","Enhancement","Monitoring","SLA","Helpdesk","Refactoring"],
+    checkLabel: "Jenis pemeliharaan",
+    checks: ["Corrective: memperbaiki bug yang ditemukan di produksi","Adaptive: menyesuaikan sistem dengan perubahan lingkungan","Perfective: meningkatkan fitur berdasarkan feedback","Preventive: refactoring untuk mencegah masalah masa depan","Monitoring & alerting 24/7 untuk deteksi dini"],
+    metrics: [{label:"Biaya",val:"60-80% total TCO"},{label:"Tools",val:"Grafana, Datadog, PagerDuty"}],
+    quiz: { q: "Mengapa fase Maintenance memakan biaya terbesar dalam SDLC?", opts: ["Karena developer sering membuat bug baru","Karena berlangsung paling lama dan mencakup perbaikan, update, dan peningkatan berkelanjutan","Karena servernya mahal","Fase ini sebenarnya tidak mahal"], ans: 1, fb: "Benar! Maintenance berlangsung selama sistem aktif digunakan (bisa bertahun-tahun), mencakup perbaikan, adaptasi, dan peningkatan yang terus-menerus.", fbWrong: "Kurang tepat. Maintenance memakan 60-80% total biaya karena berlangsung sepanjang umur sistem, bukan hanya sekali." }
+  }
+];
+
+let current = 0;
+let quizAnswered = [];
+
+function renderTimeline() {
+  const tl = document.getElementById('timeline');
+  tl.innerHTML = phases.map((p, i) => `
+    <div class="tl-item ${i === current ? 'active' : ''}" onclick="goTo(${i})">
+      <div class="tl-circle" style="background:${i === current ? p.color : 'var(--color-background-secondary)'}; border-color:${i === current ? p.color : 'var(--color-border-secondary)'}; color:${i === current ? '#fff' : 'var(--color-text-tertiary)'};">
+        <span class="tl-num">${i === 0 ? '★' : i}</span>
+      </div>
+      <div class="tl-line" style="background:${i < current ? phases[i].color : 'var(--color-border-tertiary)'};"></div>
+      <div class="tl-label" style="color:${i === current ? p.color : 'var(--color-text-tertiary)'};">${p.short}</div>
+    </div>
+  `).join('');
+}
+
+function renderContent() {
+  const p = phases[current];
+  const isOverview = current === 0;
+  const qAnswered = quizAnswered[current];
+
+  let quizHTML = '';
+  if (p.quiz) {
+    if (!qAnswered && qAnswered !== 0) {
+      quizHTML = `<div class="quiz-box">
+        <div class="section-label">Uji Pemahaman</div>
+        <div class="quiz-q">${p.quiz.q}</div>
+        <div class="quiz-opts">
+          ${p.quiz.opts.map((o, i) => `<button class="quiz-opt" onclick="answerQuiz(${i})">${o}</button>`).join('')}
+        </div>
+      </div>`;
+    } else {
+      const correct = qAnswered === 'correct';
+      quizHTML = `<div class="quiz-box">
+        <div class="section-label">Uji Pemahaman</div>
+        <div class="quiz-q">${p.quiz.q}</div>
+        <div class="quiz-opts">
+          ${p.quiz.opts.map((o, i) => `<button class="quiz-opt ${i === p.quiz.ans ? 'correct' : (i === qAnswered && !correct ? 'wrong' : '')}" disabled>${o}</button>`).join('')}
+        </div>
+        <div class="quiz-fb ${correct ? 'ok' : 'no'}">${correct ? '✓ ' + p.quiz.fb : '✗ ' + p.quiz.fbWrong}</div>
+      </div>`;
+    }
+  }
+
+  let overviewSummary = '';
+  if (isOverview) {
+    overviewSummary = `<div class="card" style="margin-bottom:1rem;">
+      <div class="section-label" style="margin-bottom:10px;">7 Fase SDLC — klik untuk belajar</div>
+      <div class="summary-grid">
+        ${phases.slice(1).map(ph => `<div class="sum-card" onclick="goTo(${ph.id})">
+          <div class="sum-num" style="color:${ph.color};">FASE ${ph.id}</div>
+          <div class="sum-name">${ph.name}</div>
+          <div class="sum-sub">${ph.subtitle.split(' ').slice(0,3).join(' ')}...</div>
+        </div>`).join('')}
+      </div>
+    </div>`;
+  }
+
+  document.getElementById('phase-content').innerHTML = `
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon" style="background:${p.bg}; color:${p.color}; font-size:20px;">${p.icon}</div>
+        <div class="card-title">
+          <h3>${p.title}</h3>
+          <p>${p.subtitle}</p>
+        </div>
+      </div>
+      <div class="desc">${p.desc}</div>
+      <div class="section-label">Kata kunci</div>
+      <div class="tag-list" style="margin-bottom:1rem;">
+        ${p.tags.map(t => `<span class="tag" style="background:${p.tagColor}; color:${p.tagText}; border:0.5px solid ${p.tagBorder};">${t}</span>`).join('')}
+      </div>
+      <div class="grid2">${p.metrics.map(m => `<div class="metric-card"><div class="metric-label">${m.label}</div><div class="metric-val">${m.val}</div></div>`).join('')}</div>
+      <div class="section-label">${p.checkLabel}</div>
+      <ul class="checklist">
+        ${p.checks.map(c => `<li><span class="check-dot" style="background:${p.bg}; color:${p.color};"></span>${c}</li>`).join('')}
+      </ul>
+    </div>
+    ${overviewSummary}
+    ${quizHTML}
+  `;
+
+  document.getElementById('progress-text').textContent = `${current + 1} / ${phases.length}`;
+  document.getElementById('btn-prev').disabled = current === 0;
+  const nextBtn = document.getElementById('btn-next');
+  nextBtn.textContent = current === phases.length - 1 ? 'Selesai ✓' : 'Selanjutnya →';
+  nextBtn.disabled = current === phases.length - 1;
+  renderTimeline();
+}
+
+function answerQuiz(idx) {
+  const p = phases[current];
+  quizAnswered[current] = (idx === p.quiz.ans) ? 'correct' : idx;
+  renderContent();
+}
+
+function goTo(idx) { current = idx; renderContent(); }
+function navigate(dir) {
+  const next = current + dir;
+  if (next >= 0 && next < phases.length) { current = next; renderContent(); }
+}
+
+renderContent();
+</script>
+</body>
+</html>
